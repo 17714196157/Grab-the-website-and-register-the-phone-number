@@ -1,0 +1,52 @@
+import requests
+import  re
+import time
+
+
+url = "https://www.myerong.com/auth.action?callback=jQuery11240438862696321892_1520924642443"
+headers ={}
+headers_str='''
+Accept:text/javascript, application/javascript, application/ecmascript, application/x-ecmascript, */*; q=0.01
+Accept-Encoding:gzip, deflate, br
+Accept-Language:zh-CN,zh;q=0.9
+Connection:keep-alive
+Content-Length:68
+Content-Type:application/x-www-form-urlencoded; charset=UTF-8
+Cookie:__jsluid=1b2795203aeaf98d08089e68a29ea106; l_code=null; l_from=baidu; l_sourceid=WWW-YM-273; l_activiteid=tgyb; Hm_lvt_7aa1ece4891bbe95ff97d9fc51c51c42=1520909260; from=baidu; qctiviteid=tgyb; sourceid=WWW-YM-273; Hm_lpvt_7aa1ece4891bbe95ff97d9fc51c51c42=1520924643
+Host:www.myerong.com
+Origin:https://www.myerong.com
+Referer:https://www.myerong.com/sites/pages/register/register.html
+User-Agent:Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.186 Safari/537.36
+X-Requested-With:XMLHttpRequest'''.strip()
+for item in headers_str.split("\n"):
+    name = item.strip().split(":")[0].strip()
+    value = item.strip().split(":")[1].strip()
+    headers.update({name: value})
+
+
+def if_myerong(phone, timeout, proxies=None):
+    """
+    www.eloancn.com
+    :param phone:
+    :param proxies:
+    :return: 已经注册 True
+             未注册 False
+             无法打开/页面发生变动 None
+    """
+    phone = str(phone)
+    data = '''method=checkNameExists&accountName={phone}&subtime={subtime}'''.format(phone=phone,
+                                                                                     subtime=time.time())
+    try:
+        res = requests.post(url, data=data, headers=headers, verify=False)
+        print(res.text)
+        result = re.findall("result\":(\w+)", res.text)[0]
+        print("result=", result)
+        return result
+    except Exception as e:
+        print(str(e))
+        return str(e)
+
+
+if __name__ == "__main__":
+    ans = if_myerong('18321248292', 10)
+    # False
